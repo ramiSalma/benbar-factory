@@ -27,24 +27,11 @@ class FreelancerProfile extends Model
         'education',
         'minimum_project_budget',
         'currency',
-        'stripe_account_id',
-        'stripe_onboarded',
-        'iban',
-        'bank_name',
-        'identity_verified',
-        'id_document_url',
-        'identity_verified_at',
-        'verified_by',
         'work_type',
         'hours_per_week',
         'preferred_project_types',
-        'average_rating',
-        'total_reviews',
-        'completed_missions',
-        'total_earned',
-        'on_time_delivery_rate',
-        'profile_status',
-        'rejection_reason',
+        'iban',
+        'bank_name',
     ];
 
     protected $casts = [
@@ -99,7 +86,7 @@ class FreelancerProfile extends Model
     public function scopeAvailable($query)
     {
         return $query->where('availability', true)
-                     ->where('profile_status', 'approved');
+            ->where('profile_status', 'approved');
     }
 
     public function scopeApproved($query)

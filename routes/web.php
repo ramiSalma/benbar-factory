@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -14,8 +15,20 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
+Route::get('/dashboard', function (Request $request) {
+    $user = $request->user()->load(['roles', 'clientProfile', 'freelancerProfile', 'qaProfile']);
+    $primaryRole = $user->getRoleNames()->first();
+
+    return Inertia::render('Dashboard', [
+        'profile' => match ($primaryRole) {
+            'client' => $user->clientProfile,
+            'freelancer' => $user->freelancerProfile,
+            'qa' => $user->qaProfile,
+            default => null,
+        },
+        'roles' => $user->getRoleNames(),
+        'primaryRole' => $primaryRole,
+    ]);
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {

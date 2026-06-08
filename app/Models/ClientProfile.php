@@ -27,12 +27,6 @@ class ClientProfile extends Model
         'billing_zip',
         'preferred_communication',
         'receive_newsletter',
-        'profile_verified',
-        'total_projects',
-        'active_projects',
-        'total_spent',
-        'stripe_customer_id',
-        'default_payment_method',
     ];
 
     protected $casts = [

@@ -11,7 +11,6 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -29,14 +28,12 @@ class User extends Authenticatable
         'email',
         'password',
         'status',
-        'admin_notes',
         'avatar',
         'country',
         'city',
         'timezone',
         'preferred_language',
         'email_verified_at',
-        'email_verification_token',
     ];
 
     /**
@@ -58,11 +55,6 @@ class User extends Authenticatable
     // -------------------------------------------------------------------------
     // Relationships
     // -------------------------------------------------------------------------
-
-    public function roles(): BelongsToMany
-    {
-        return $this->belongsToMany(Role::class, 'role_user');
-    }
 
     public function clientProfile(): HasOne
     {
@@ -170,16 +162,9 @@ class User extends Authenticatable
     // Helper methods
     // -------------------------------------------------------------------------
 
-    public function hasRole(string $role): bool
-    {
-        return $this->roles()->where('name', $role)->exists();
-    }
-
     public function hasPermission(string $permission): bool
     {
-        return $this->roles()
-            ->whereHas('permissions', fn($q) => $q->where('name', $permission))
-            ->exists();
+        return $this->hasPermissionTo($permission);
     }
 
     public function isAdmin(): bool
