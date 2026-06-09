@@ -265,7 +265,7 @@ export default function Register() {
                                     <InputError message={errors.role} className="mt-1.5 text-xs font-semibold text-red-600" />
                                 </div>
                                 <div className="pt-2">
-                                    <button className="w-full flex justify-center items-center py-3 bg-gradient-to-br from-cyan-600 via-indigo-600 to-blue-800 font-bold rounded-xl tracking-wide transition-all duration-300 ease-in-out text-white">
+                                    <button className="w-full flex justify-center items-center py-3 bg-indigo-600 font-bold rounded-xl tracking-wide transition-all duration-300 ease-in-out text-white">
                                         Continue Setup →
                                     </button>
                                 </div>
@@ -458,14 +458,14 @@ export default function Register() {
                                         Back
                                     </button>
 
-                                    <PrimaryButton 
+                                    <button 
                                         disabled={processing} 
-                                        className={`justify-center py-3 px-5 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl tracking-wide shadow-md shadow-blue-500/10 transition-all ${
+                                        className={`justify-center py-3 px-5 bg-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl tracking-wide shadow-md shadow-blue-500/10 transition-all ${
                                             processing ? 'opacity-50 cursor-not-allowed' : 'active:scale-[0.98]'
                                         }`}
                                     >
                                         Complete Profile ✓
-                                    </PrimaryButton>
+                                    </button>
                                 </div>
                             </form>
                         )}

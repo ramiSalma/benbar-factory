@@ -145,12 +145,12 @@ export default function Login({ status, canResetPassword }) {
 
                             {/* Action Buttons */}
                             <div className="pt-2">
-                                <PrimaryButton 
-                                    className="w-full flex justify-center items-center py-3 bg-cyan-500 font-bold rounded-xl tracking-wide transition-all duration-300 ease-in-out text-white disabled:opacity-50" 
+                                <button 
+                                    className="w-full flex justify-center items-center py-3 bg-indigo-500 font-bold rounded-xl tracking-wide transition-all duration-300 ease-in-out text-white disabled:opacity-50" 
                                     disabled={processing}
                                 >
                                     Sign In →
-                                </PrimaryButton>
+                                </button>
                             </div>
 
                         </form>
