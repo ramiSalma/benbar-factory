@@ -1,5 +1,6 @@
+import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, usePage, Link, router } from '@inertiajs/react';
 
 const roleLabels = {
     admin: 'Admin',
@@ -21,10 +22,36 @@ function initials(name) {
         .join('');
 }
 
-export default function Dashboard({ profile, primaryRole, roles = [] }) {
+export default function Dashboard({ profile, primaryRole, roles = [], requests }) {
     const user = usePage().props.auth.user;
     const displayRole = formatRole(primaryRole ?? roles[0]);
     const location = [user.city, user.country].filter(Boolean).join(', ');
+
+    // Normalize requests prop safely to prevent reading properties of undefined
+    const safeRequestsData = requests?.data ?? [];
+    const safeRequestsLinks = requests?.links ?? [];
+
+    // For deleting items directly from the list inside the dashboard
+    const destroyRequest = (id) => {
+        if (confirm('Are you sure you want to delete this request?')) {
+            router.delete(route('client-requests.destroy', id), {
+                preserveScroll: true
+            });
+        }
+    };
+
+    const getStatusColor = (status) => {
+        const colors = {
+            draft: 'bg-slate-100 text-slate-700 border-slate-200',
+            published: 'bg-sky-50 text-sky-700 border-sky-200',
+            in_review: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+            accepted: 'bg-blue-50 text-blue-700 border-blue-200',
+            rejected: 'bg-rose-50 text-rose-700 border-rose-200',
+            closed: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+        };
+        return colors[status] || 'bg-gray-100 text-gray-700';
+    };
+
     const profileFields =
         primaryRole === 'freelancer'
             ? [
@@ -64,121 +91,7 @@ export default function Dashboard({ profile, primaryRole, roles = [] }) {
         >
             <Head title="Dashboard" />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-                        <section className="bg-white p-6 shadow-sm sm:rounded-lg">
-                            <div className="flex items-center gap-4">
-                                {user.avatar ? (
-                                    <img
-                                        src={user.avatar}
-                                        alt={user.name}
-                                        className="h-16 w-16 rounded-full object-cover"
-                                    />
-                                ) : (
-                                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-900 text-lg font-semibold text-white">
-                                        {initials(user.name)}
-                                    </div>
-                                )}
-                                <div>
-                                    <p className="text-lg font-semibold text-gray-900">
-                                        {user.name}
-                                    </p>
-                                    <p className="text-sm text-gray-500">
-                                        {user.email}
-                                    </p>
-                                </div>
-                            </div>
-
-                            <div className="mt-6 space-y-4">
-                                <div>
-                                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Role
-                                    </p>
-                                    <div className="mt-2 flex flex-wrap gap-2">
-                                        {(roles.length ? roles : [primaryRole])
-                                            .filter(Boolean)
-                                            .map((role) => (
-                                                <span
-                                                    key={role}
-                                                    className="rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700"
-                                                >
-                                                    {formatRole(role)}
-                                                </span>
-                                            ))}
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Status
-                                    </p>
-                                    <p className="mt-1 text-sm font-medium capitalize text-gray-900">
-                                        {user.status?.replace('_', ' ') ??
-                                            'Active'}
-                                    </p>
-                                </div>
-
-                                <div>
-                                    <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                                        Location
-                                    </p>
-                                    <p className="mt-1 text-sm text-gray-900">
-                                        {location || 'Not added yet'}
-                                    </p>
-                                </div>
-                            </div>
-                        </section>
-
-                        <section className="bg-white p-6 shadow-sm sm:rounded-lg">
-                            <div className="flex flex-col gap-2 border-b border-gray-100 pb-5 sm:flex-row sm:items-center sm:justify-between">
-                                <div>
-                                    <p className="text-sm font-medium text-gray-500">
-                                        {displayRole} profile
-                                    </p>
-                                    <h3 className="text-2xl font-semibold text-gray-900">
-                                        Account overview
-                                    </h3>
-                                </div>
-                                {profile?.profile_verified !== undefined && (
-                                    <span className="w-fit rounded-full bg-gray-100 px-3 py-1 text-sm font-medium text-gray-700">
-                                        {profile.profile_verified
-                                            ? 'Verified'
-                                            : 'Pending verification'}
-                                    </span>
-                                )}
-                            </div>
-
-                            <dl className="mt-6 grid gap-5 md:grid-cols-2">
-                                {profileFields.map(([label, value]) => (
-                                    <div
-                                        key={label}
-                                        className="border-b border-gray-100 pb-4"
-                                    >
-                                        <dt className="text-sm font-medium text-gray-500">
-                                            {label}
-                                        </dt>
-                                        <dd className="mt-1 break-words text-sm text-gray-900">
-                                            {value || 'Not added yet'}
-                                        </dd>
-                                    </div>
-                                ))}
-                            </dl>
-
-                            {profile?.bio && (
-                                <div className="mt-6">
-                                    <p className="text-sm font-medium text-gray-500">
-                                        Bio
-                                    </p>
-                                    <p className="mt-2 whitespace-pre-line text-sm leading-6 text-gray-900">
-                                        {profile.bio}
-                                    </p>
-                                </div>
-                            )}
-                        </section>
-                    </div>
-                </div>
-            </div>
+           
         </AuthenticatedLayout>
     );
 }

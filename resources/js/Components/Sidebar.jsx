@@ -52,6 +52,13 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
             icon: "M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z",
             show: can(["client"]),
         },
+        {
+            label: "My Requests",
+            // This dynamically generates the URL: /client-requests
+            href: route("client-requests.index"),
+            icon: "M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z",
+            show: can(["client"]),
+        },
         // FREELANCER
         {
             label: "Available Missions",
@@ -76,9 +83,9 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
 
     return (
         <aside
-           className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-indigo-500 to-indigo-500 text-indigo-200 border-r border-indigo-950/40 transition-all duration-300 ease-in-out hidden sm:flex ${
-    isOpen ? "w-64" : "w-20"
-}`}
+            className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-indigo-500 to-indigo-500 text-indigo-200 border-r border-indigo-950/40 transition-all duration-300 ease-in-out hidden sm:flex ${
+                isOpen ? "w-64" : "w-20"
+            }`}
         >
             {/* Header / Logo Space */}
             <div className="h-16 flex items-center px-6 border-b border-slate-800 overflow-hidden shrink-0">
@@ -91,11 +98,23 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 shadow-md flex items-center justify-center transition-transform duration-300"
-                style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+                style={{
+                    transform: isOpen ? "rotate(180deg)" : "rotate(0deg)",
+                }}
                 aria-label={isOpen ? "Collapse sidebar" : "Expand sidebar"}
             >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2.5"
+                        d="M9 5l7 7-7 7"
+                    />
                 </svg>
             </button>
 
@@ -105,8 +124,8 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
                     .filter((item) => item.show)
                     .map((item) => {
                         // Safe fallback fallback if href remains '#'
-                        const isActive = item.href !== "#" && url.startsWith(item.href);
-
+                        //  Safe fallback
+                        const isActive = item.href ? window.location.pathname.startsWith(item.href) : false;
                         return (
                             <Link
                                 key={item.label}
@@ -122,11 +141,17 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
                                     strokeWidth="2"
                                     viewBox="0 0 24 24"
                                 >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d={item.icon}
+                                    />
                                 </svg>
 
                                 {isOpen ? (
-                                    <span className="truncate">{item.label}</span>
+                                    <span className="truncate">
+                                        {item.label}
+                                    </span>
                                 ) : (
                                     /* Hover Tooltip when sidebar is collapsed */
                                     <span className="absolute left-16 scale-0 rounded bg-slate-950 p-2 text-xs text-white group-hover:scale-100 transition-all z-50 shadow-lg pointer-events-none whitespace-nowrap">

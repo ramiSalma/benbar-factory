@@ -678,3 +678,54 @@ Stack trace:
 #52 /Users/ids24/Documents/space/benbar-factory/artisan(16): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
 #53 {main}
 "} 
+[2026-06-09 14:11:19] local.ERROR: syntax error, unexpected token "use", expecting "{" {"exception":"[object] (ParseError(code: 0): syntax error, unexpected token \"use\", expecting \"{\" at /Users/ids24/Documents/space/benbar-factory/routes/web.php:11)
+[stacktrace]
+#0 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Routing/Router.php(526): Illuminate\\Routing\\RouteFileRegistrar->register('/Users/ids24/Do...')
+#1 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Routing/Router.php(480): Illuminate\\Routing\\Router->loadRoutes('/Users/ids24/Do...')
+#2 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Routing/RouteRegistrar.php(212): Illuminate\\Routing\\Router->group(Array, '/Users/ids24/Do...')
+#3 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php(261): Illuminate\\Routing\\RouteRegistrar->group('/Users/ids24/Do...')
+#4 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Foundation\\Configuration\\ApplicationBuilder->{closure:Illuminate\\Foundation\\Configuration\\ApplicationBuilder::buildRoutingCallback():210}()
+#5 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#6 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(84): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#7 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Object(Closure), Object(Closure))
+#8 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Object(Closure), Array, NULL)
+#9 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/RouteServiceProvider.php(162): Illuminate\\Container\\Container->call(Object(Closure))
+#10 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Support/Providers/RouteServiceProvider.php(59): Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider->loadRoutes()
+#11 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(36): Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider->{closure:Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider::register():53}()
+#12 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/Util.php(43): Illuminate\\Container\\BoundMethod::{closure:Illuminate\\Container\\BoundMethod::call():35}()
+#13 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(84): Illuminate\\Container\\Util::unwrapIfClosure(Object(Closure))
+#14 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/BoundMethod.php(35): Illuminate\\Container\\BoundMethod::callBoundMethod(Object(Illuminate\\Foundation\\Application), Object(Closure), Object(Closure))
+#15 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Container/Container.php(799): Illuminate\\Container\\BoundMethod::call(Object(Illuminate\\Foundation\\Application), Object(Closure), Array, NULL)
+#16 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Support/ServiceProvider.php(150): Illuminate\\Container\\Container->call(Object(Closure))
+#17 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1154): Illuminate\\Support\\ServiceProvider->callBootedCallbacks()
+#18 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1132): Illuminate\\Foundation\\Application->bootProvider(Object(Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider))
+#19 [internal function]: Illuminate\\Foundation\\Application->{closure:Illuminate\\Foundation\\Application::boot():1131}(Object(Illuminate\\Foundation\\Support\\Providers\\RouteServiceProvider), 'Illuminate\\\\Foun...')
+#20 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1131): array_walk(Array, Object(Closure))
+#21 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/BootProviders.php(17): Illuminate\\Foundation\\Application->boot()
+#22 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(342): Illuminate\\Foundation\\Bootstrap\\BootProviders->bootstrap(Object(Illuminate\\Foundation\\Application))
+#23 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(186): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#24 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(170): Illuminate\\Foundation\\Http\\Kernel->bootstrap()
+#25 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#26 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1220): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#27 /Users/ids24/Documents/space/benbar-factory/public/index.php(20): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
+#28 /Users/ids24/Documents/space/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('/Users/ids24/Do...')
+#29 {main}
+"} 
+[2026-06-09 14:12:30] local.ERROR: Uncaught Error: Call to undefined method Illuminate\Support\Facades\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught Error: Call to undefined method Illuminate\\Support\\Facades\\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown at Command line code:26)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 14:12:30] local.ERROR: Cannot use App\Http\Controllers\ProfileController as ProfileController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\ProfileController as ProfileController because the name is already in use at /Users/ids24/Documents/space/benbar-factory/routes/web.php:9)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 14:12:35] local.ERROR: Cannot use App\Http\Controllers\ProfileController as ProfileController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\ProfileController as ProfileController because the name is already in use at /Users/ids24/Documents/space/benbar-factory/routes/web.php:9)
+[stacktrace]
+#0 {main}
+"} 
