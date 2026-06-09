@@ -1,4 +1,3 @@
-import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
@@ -25,136 +24,135 @@ export default function Login({ status, canResetPassword }) {
         <GuestLayout>
             <Head title="Log in" />
 
-            {/* Split Screen Container */}
-            <div className="fixed inset-0 flex bg-slate-950 overflow-hidden">
+            {/* Main Screen Wrapper splits into decorative left panel and right form canvas */}
+            <div className="min-h-screen w-full grid grid-cols-1 md:grid-cols-2 bg-[#efefef]">
                 
-                {/* LEFT SIDE: Vibrant Indigo/Blue Branding Panel */}
-                <div className="hidden lg:flex lg:w-1/2 flex-col justify-between p-12 bg-gradient-to-b from-indigo-800 via-blue-700 to-indigo-950 relative">
-                    {/* Ambient Glow Effect Overlay (No White) */}
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(99,102,241,0.15),transparent_50%)]" />
-                    
-                    {/* Top Branding Logo */}
-                    <div className="z-10">
-                        <span className="text-2xl font-bold text-white tracking-wider">BENBAR</span>
-                    </div>
+                {/* --- LEFT SECTION: BLUE DECORATIVE SIDEBAR (Hidden on mobile, takes full height on md+) --- */}
+                <div className="hidden md:flex relative flex-col justify-between p-12 bg-gradient-to-br from-blue-600 via-indigo-600 to-blue-800 overflow-hidden select-none">
+                    {/* Abstract Backdrop Geometrics */}
+                    <div className="absolute bottom-10 right-[-10%] w-80 h-80 bg-cyan-400/20 rounded-full blur-2xl"></div>
 
-                    {/* Middle Inspirational/Marketing Text */}
-                    <div className="z-10 max-w-md space-y-4">
-                        <h1 className="text-4xl font-extrabold text-white tracking-tight leading-none">
-                            Manage your missions with ease.
+                    {/* Value Statement / Welcome Copy */}
+                    <div className="relative z-10 my-auto max-w-md space-y-4">
+                        <span className="inline-block px-3 py-1 text-xs font-bold uppercase tracking-widest text-cyan-200 bg-cyan-950/30 rounded-full backdrop-blur-sm border border-cyan-500/20">
+                            Welcome Back
+                        </span>
+                        <h1 className="text-4xl lg:text-5xl font-black text-white tracking-tight leading-none">
+                            Access your mission workspace.
                         </h1>
-                        <p className="text-lg text-indigo-100/70">
-                            A powerful workspace built for admins, managers, clients, and freelancers alike.
+                        <p className="text-blue-100/80 text-base font-medium leading-relaxed">
+                            Connect with top-tier talent, manage assignments seamlessly, and track progress all from your central dashboard workspace.
                         </p>
-                    </div>
-
-                    {/* Bottom Footer Meta */}
-                    <div className="z-10 text-xs text-indigo-200/50">
-                        &copy; 2026 BENBAR. All rights reserved.
                     </div>
                 </div>
 
-                {/* RIGHT SIDE: The Sleek Dark Login Form */}
-                <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 bg-slate-950 border-l border-slate-900 overflow-y-auto">
-                    <div className="w-full max-w-md space-y-8">
+                {/* --- RIGHT SECTION: FORM WORKSPACE SCREEN --- */}
+                <div className="relative min-h-screen flex items-center justify-center md:p-12 overflow-y-auto">
+                    
+                    {/* Soft Canvas Floating Accent Bubbles (Behind Right Side Card) */}
+                    <div className="absolute top-1/4 right-12 w-72 h-72 bg-blue-300/20 rounded-full blur-3xl"></div>
+                    <div className="absolute bottom-1/4 left-12 w-60 h-60 bg-indigo-300/20 rounded-full blur-2xl"></div>
+
+                    {/* --- TRANSPARENT FORM CARD --- */}
+                    <div className="relative z-10 w-full p-6 md:p-8 transition-all duration-300">
                         
-                        {/* Header Title */}
-                        <div>
-                            <h2 className="text-3xl font-bold text-white tracking-wide">Welcome back</h2>
-                            <p className="text-sm text-slate-400 mt-2">
-                                Don't have an account?{' '}
-                                <Link href={route('register')} className="text-indigo-400 font-medium hover:text-indigo-300 transition-colors">
-                                    Register here
-                                </Link>
+                        {/* Header Title Section */}
+                        <div className="relative z-10 mb-6 text-center md:text-left">
+                            <h2 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">
+                                Sign In to <span className="text-blue-600">Account</span>
+                            </h2>
+                            <p className="text-slate-500 text-xs md:text-sm font-medium mt-1">
+                                Welcome back! Securely enter your credentials below.
                             </p>
                         </div>
 
                         {status && (
-                            <div className="p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-sm font-medium text-green-400">
+                            <div className="mb-4 text-sm font-semibold text-green-600 p-3 bg-green-50 rounded-xl border border-green-200">
                                 {status}
                             </div>
                         )}
 
-                        <form onSubmit={submit} className="space-y-6">
-                            {/* Email Input Field */}
+                        {/* Login Form Fields */}
+                        <form onSubmit={submit} className="relative z-10 space-y-5">
+                            
+                            {/* Email Address Field */}
                             <div>
-                                <InputLabel 
-                                    htmlFor="email" 
-                                    value="Email Address" 
-                                    className="text-slate-300 font-medium text-sm" 
-                                />
-
+                                <InputLabel value="Email Address" className="text-slate-700 font-bold tracking-wide text-xs uppercase mb-1.5" />
                                 <TextInput
                                     id="email"
                                     type="email"
                                     name="email"
                                     value={data.email}
-                                    className="mt-1.5 block w-full bg-slate-900 border-slate-800 text-white placeholder-slate-600 focus:border-indigo-500 focus:ring-indigo-500/50 rounded-lg shadow-inner"
+                                    className="mt-1 block w-full bg-white/50 border-white/60 text-slate-900 rounded-xl placeholder-slate-400 focus:bg-white/90 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200 shadow-inner"
                                     autoComplete="username"
                                     isFocused={true}
                                     onChange={(e) => setData('email', e.target.value)}
-                                    placeholder="you@example.com"
+                                    placeholder="john@example.com"
+                                    required
                                 />
-
-                                <InputError message={errors.email} className="mt-1.5 text-red-400 text-xs" />
+                                <InputError message={errors.email} className="mt-1.5 text-xs font-semibold text-red-600" />
                             </div>
 
-                            {/* Password Input Field */}
+                            {/* Password Field */}
                             <div>
-                                <div className="flex items-center justify-between">
-                                    <InputLabel 
-                                        htmlFor="password" 
-                                        value="Password" 
-                                        className="text-slate-300 font-medium text-sm" 
-                                    />
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <InputLabel value="Password" className="text-slate-700 font-bold tracking-wide text-xs uppercase" />
                                     {canResetPassword && (
                                         <Link
                                             href={route('password.request')}
-                                            className="text-xs text-indigo-400 hover:text-indigo-300 transition-colors underline-offset-4"
+                                            className="text-xs font-bold text-blue-600 hover:text-indigo-600 transition duration-150"
                                         >
                                             Forgot password?
                                         </Link>
                                     )}
                                 </div>
-
                                 <TextInput
                                     id="password"
                                     type="password"
                                     name="password"
                                     value={data.password}
-                                    className="mt-1.5 block w-full bg-slate-900 border-slate-800 text-white placeholder-slate-600 focus:border-indigo-500 focus:ring-indigo-500/50 rounded-lg shadow-inner"
+                                    className="mt-1 block w-full bg-white/50 border-white/60 text-slate-900 rounded-xl placeholder-slate-400 focus:bg-white/90 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200 shadow-inner"
                                     autoComplete="current-password"
                                     onChange={(e) => setData('password', e.target.value)}
                                     placeholder="••••••••"
+                                    required
                                 />
-
-                                <InputError message={errors.password} className="mt-1.5 text-red-400 text-xs" />
+                                <InputError message={errors.password} className="mt-1.5 text-xs font-semibold text-red-600" />
                             </div>
 
                             {/* Remember Me Checkbox */}
-                            <div className="flex items-center pt-1">
-                                <label className="flex items-center cursor-pointer group">
-                                    <Checkbox
+                            <div className="flex items-center justify-between pt-1">
+                                <label className="flex items-center cursor-pointer select-none">
+                                    <input
+                                        type="checkbox"
                                         name="remember"
                                         checked={data.remember}
                                         onChange={(e) => setData('remember', e.target.checked)}
-                                        className="bg-slate-900 border-slate-800 text-indigo-600 focus:ring-indigo-500/50 rounded"
+                                        className="rounded border-slate-300 text-blue-600 shadow-sm focus:ring-blue-500 focus:ring-opacity-50 transition duration-150"
                                     />
-                                    <span className="ms-2 text-sm text-slate-400 group-hover:text-slate-300 transition-colors">
+                                    <span className="ms-2 text-xs font-bold text-slate-600 uppercase tracking-wide">
                                         Keep me logged in
                                     </span>
                                 </label>
+
+                                <Link
+                                    href={route('register')}
+                                    className="text-xs font-bold text-slate-500 hover:text-blue-600 transition duration-150"
+                                >
+                                    Create account
+                                </Link>
                             </div>
 
-                            {/* Submit Button */}
+                            {/* Action Buttons */}
                             <div className="pt-2">
                                 <PrimaryButton 
-                                    className="w-full justify-center py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold rounded-lg shadow-lg shadow-indigo-600/20 transition-all duration-150 disabled:opacity-50" 
+                                    className="w-full flex justify-center items-center py-3 bg-cyan-500 font-bold rounded-xl tracking-wide transition-all duration-300 ease-in-out text-white disabled:opacity-50" 
                                     disabled={processing}
                                 >
-                                    Log in to Dashboard
+                                    Sign In →
                                 </PrimaryButton>
                             </div>
+
                         </form>
                     </div>
                 </div>
