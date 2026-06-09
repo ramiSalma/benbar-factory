@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 use App\Http\Controllers\ClientRequestController;
+use App\Http\Controllers\AIController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -41,6 +42,15 @@ Route::middleware('auth')->group(function () {
 
 
     Route::resource('client-requests', ClientRequestController::class);
+
+    Route::get('/ai', [AIController::class, 'storeSession'])
+        ->name('ai.new');
+
+    Route::get('/ai/{session}', [AIController::class, 'show'])
+        ->name('ai.show');
+
+    Route::post('/ai/{session}/send', [AIController::class, 'sendMessage'])
+        ->name('ai.send');
 });
 
 require __DIR__.'/auth.php';

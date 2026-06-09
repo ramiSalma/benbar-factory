@@ -749,3 +749,65 @@ Stack trace:
 [stacktrace]
 #0 {main}
 "} 
+[2026-06-09 16:11:52] local.ERROR: Uncaught Error: Call to undefined method Illuminate\Support\Facades\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught Error: Call to undefined method Illuminate\\Support\\Facades\\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown at Command line code:26)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 16:11:53] local.ERROR: Uncaught Error: Call to undefined method Illuminate\Support\Facades\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught Error: Call to undefined method Illuminate\\Support\\Facades\\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown at Command line code:26)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 16:11:55] local.ERROR: Uncaught Error: Call to undefined method Illuminate\Support\Facades\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught Error: Call to undefined method Illuminate\\Support\\Facades\\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown at Command line code:26)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 16:11:56] local.ERROR: Uncaught Error: Call to undefined method Illuminate\Support\Facades\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught Error: Call to undefined method Illuminate\\Support\\Facades\\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown at Command line code:26)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 16:11:57] local.ERROR: Uncaught Error: Call to undefined method Illuminate\Support\Facades\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Uncaught Error: Call to undefined method Illuminate\\Support\\Facades\\Route::getTable() in Command line code:26
+Stack trace:
+#0 {main}
+  thrown at Command line code:26)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 16:12:03] local.ERROR: Cannot use App\Http\Controllers\ClientRequestController as ClientRequestController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\ClientRequestController as ClientRequestController because the name is already in use at /Users/ids24/Documents/space/benbar-factory/routes/web.php:10)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 16:12:05] local.ERROR: Cannot use App\Http\Controllers\ClientRequestController as ClientRequestController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\ClientRequestController as ClientRequestController because the name is already in use at /Users/ids24/Documents/space/benbar-factory/routes/web.php:10)
+[stacktrace]
+#0 {main}
+"} 
+[2026-06-09 16:12:05] local.ERROR: Cannot use App\Http\Controllers\ClientRequestController as ClientRequestController because the name is already in use {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Cannot use App\\Http\\Controllers\\ClientRequestController as ClientRequestController because the name is already in use at /Users/ids24/Documents/space/benbar-factory/routes/web.php:10)
+[stacktrace]
+#0 {main}
+"} 
