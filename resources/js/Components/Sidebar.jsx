@@ -76,7 +76,7 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
 
     return (
         <aside
-           className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-sky-500 to-indigo-500 text-indigo-200 border-r border-indigo-950/40 transition-all duration-300 ease-in-out hidden sm:flex ${
+           className={`fixed inset-y-0 left-0 z-50 flex flex-col bg-indigo-500 to-indigo-500 text-indigo-200 border-r border-indigo-950/40 transition-all duration-300 ease-in-out hidden sm:flex ${
     isOpen ? "w-64" : "w-20"
 }`}
         >
@@ -111,16 +111,12 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
                             <Link
                                 key={item.label}
                                 href={item.href}
-                                className={`flex items-center gap-4 py-3 rounded-lg text-sm font-medium transition-all group relative ${
+                                className={`flex items-center gap-4 py-3 text-white rounded-lg text-sm font-medium transition-all group relative ${
                                     isOpen ? "px-4" : "px-0 justify-center"
-                                } ${
-                                    isActive
-                                        ? "bg-indigo-600 text-white font-semibold"
-                                        : "hover:bg-slate-800 hover:text-white"
-                                }`}
+                                } `}
                             >
                                 <svg
-                                    className={`w-5 h-5 shrink-0 ${isActive ? "text-white" : "text-slate-400 group-hover:text-white"}`}
+                                    className={`w-5 h-5 shrink-0 text-white`}
                                     fill="none"
                                     stroke="currentColor"
                                     strokeWidth="2"
