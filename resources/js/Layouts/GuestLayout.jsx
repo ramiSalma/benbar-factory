@@ -6,7 +6,7 @@ export default function GuestLayout({ children }) {
         <div className="flex min-h-screen flex-col items-center pt-6 sm:justify-center sm:pt-0">
            
 
-            <div className="mt-6 w-full overflow-hidden  px-6 py-4 ">
+            <div className=" w-full overflow-hidden ">
                 {children}
             </div>
         </div>
