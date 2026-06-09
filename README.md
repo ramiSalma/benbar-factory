@@ -10,3 +10,5 @@ npm install --legacy-peer-deps
 
 
 npm install -D vite@latest laravel-vite-plugin@latest
+
+composer require openai-php/laravel

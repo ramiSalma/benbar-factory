@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class AiSession extends Model
 {
@@ -13,26 +14,16 @@ class AiSession extends Model
     protected $fillable = [
         'user_id',
         'project_id',
-        'prompt',
-        'response',
-        'tokens_used',
-        'model',
-        'purpose',
-        'cost',
-        'metadata',
-        'duration_ms',
+        'title',
     ];
 
+    // ---------------- casts ----------------
     protected $casts = [
-        'tokens_used' => 'integer',
-        'cost'        => 'decimal:6',
-        'metadata'    => 'array',
-        'duration_ms' => 'integer',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
-    // -------------------------------------------------------------------------
-    // Relationships
-    // -------------------------------------------------------------------------
+    // ---------------- relationships ----------------
 
     public function user(): BelongsTo
     {
@@ -42,5 +33,10 @@ class AiSession extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(AiMessage::class, 'ai_session_id');
     }
 }
