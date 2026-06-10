@@ -1,13 +1,12 @@
 <?php
 
+use App\Http\Controllers\AIController;
+use App\Http\Controllers\ClientRequestController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
-use App\Http\Controllers\ClientRequestController;
-use App\Http\Controllers\AIController;
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -39,22 +38,17 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-
-
     Route::resource('client-requests', ClientRequestController::class);
 
-    Route::get('/ai', [AIController::class, 'index'])
-    ->name('ai.index');
+    // routes/web.php  — inside your auth middleware group
 
-
-    Route::get('/ai', [AIController::class, 'storeSession'])
-        ->name('ai.new');
-
-    Route::get('/ai/{session}', [AIController::class, 'show'])
-        ->name('ai.show');
-
-    Route::post('/ai/{session}/send', [AIController::class, 'sendMessage'])
-        ->name('ai.send');
+    Route::prefix('ai')->name('ai.')->group(function () {
+        Route::get('/', [AIController::class, 'index'])->name('index');
+        Route::post('/sessions', [AIController::class, 'storeSession'])->name('new');
+        Route::get('/{session}', [AIController::class, 'show'])->name('show');
+        Route::post('/{session}/send', [AIController::class, 'sendMessage'])->name('send');
+        Route::delete('/sessions/{session}', [AIController::class, 'destroySession'])->name('destroy');
+    });
 });
 
 require __DIR__.'/auth.php';

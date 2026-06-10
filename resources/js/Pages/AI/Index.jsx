@@ -1,8 +1,9 @@
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, Link, router } from "@inertiajs/react";
 
 export default function Index({ sessions }) {
     const createSession = () => {
-        router.post(route("ai.sessions.store"));
+        router.post(route("ai.new"));
     };
 
     return (
@@ -18,7 +19,6 @@ export default function Index({ sessions }) {
                             <h1 className="text-3xl font-bold">
                                 AI Assistant
                             </h1>
-
                             <p className="text-gray-600 mt-1">
                                 Start a new conversation or continue an existing one.
                             </p>
@@ -34,17 +34,14 @@ export default function Index({ sessions }) {
 
                     {/* Sessions */}
                     <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-
                         {sessions.length === 0 ? (
                             <div className="p-10 text-center">
                                 <h2 className="text-lg font-medium">
                                     No conversations yet
                                 </h2>
-
                                 <p className="text-gray-500 mt-2">
                                     Create your first AI conversation.
                                 </p>
-
                                 <button
                                     onClick={createSession}
                                     className="mt-4 px-4 py-2 rounded-lg bg-black text-white"
@@ -65,15 +62,11 @@ export default function Index({ sessions }) {
                                                 <h3 className="font-semibold">
                                                     {session.title || `Conversation #${session.id}`}
                                                 </h3>
-
                                                 <p className="text-sm text-gray-500">
                                                     Created {new Date(session.created_at).toLocaleDateString()}
                                                 </p>
                                             </div>
-
-                                            <span className="text-gray-400">
-                                                →
-                                            </span>
+                                            <span className="text-gray-400">→</span>
                                         </div>
                                     </Link>
                                 ))}
@@ -85,3 +78,9 @@ export default function Index({ sessions }) {
         </>
     );
 }
+
+Index.layout = (page) => (
+    <AuthenticatedLayout>
+        {page}
+    </AuthenticatedLayout>
+);

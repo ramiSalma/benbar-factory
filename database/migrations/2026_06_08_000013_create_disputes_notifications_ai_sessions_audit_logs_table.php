@@ -56,10 +56,10 @@ return new class extends Migration
 
             $table->unsignedBigInteger('project_id')->nullable();
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('set null');
-
+            $table->string('title')->default('New Conversation') ;
             // --- From diagram ---
-            $table->text('prompt');
-            $table->longText('response');
+            $table->text('prompt')->nullable();
+            $table->longText('response')->nullable();
             $table->unsignedInteger('tokens_used')->default(0);
 
             // --- Extended fields ---
