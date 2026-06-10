@@ -43,6 +43,10 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('client-requests', ClientRequestController::class);
 
+    Route::get('/ai', [AIController::class, 'index'])
+    ->name('ai.index');
+
+
     Route::get('/ai', [AIController::class, 'storeSession'])
         ->name('ai.new');
 

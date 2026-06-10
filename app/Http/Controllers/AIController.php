@@ -2,14 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AiSession;
 use App\Models\AiMessage;
+use App\Models\AiSession;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use OpenAI;
 
 class AIController extends Controller
 {
+    public function index()
+    {
+        $sessions = AiSession::query()
+            ->where('user_id', auth()->id())
+            ->latest()
+            ->get();
+
+        return Inertia::render('AI/Index', [
+            'sessions' => $sessions,
+        ]);
+    }
+
     // ---------------------------------------
     // Create new chat session
     // ---------------------------------------
@@ -66,7 +78,7 @@ class AIController extends Controller
         // 3. Add system prompt (IMPORTANT 🧠)
         array_unshift($messages, [
             'role' => 'system',
-            'content' => 'You are Benbar Factory AI assistant. You help users define software projects, estimate cost, and suggest features.'
+            'content' => 'You are Benbar Factory AI assistant. You help users define software projects, estimate cost, and suggest features.',
         ]);
 
         // 4. Call OpenAI
@@ -86,7 +98,7 @@ class AIController extends Controller
 
         // 6. Return updated messages
         return back()->with([
-            'messages' => $session->messages()->latest()->get()
+            'messages' => $session->messages()->latest()->get(),
         ]);
     }
 
