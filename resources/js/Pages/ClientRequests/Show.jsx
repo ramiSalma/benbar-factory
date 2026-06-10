@@ -1,6 +1,7 @@
 import React from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import Dashboard from '../Dashboard';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Show({ request }) {
     const destroy = () => {
@@ -118,4 +119,8 @@ export default function Show({ request }) {
 }
 
 
-Show.layout = (page) => <Dashboard children={page} />;
+Show.layout = (page) => (
+    <AuthenticatedLayout>
+        {page}
+    </AuthenticatedLayout>
+);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ClientRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -15,7 +16,7 @@ class ClientRequestController extends Controller
     public function index(): Response
     {
         $requests = ClientRequest::query()
-            ->where('client_user_id', auth()->id())
+            ->where('client_user_id', Auth::user()->id)
             ->latest()
             ->paginate(10);
 
@@ -29,6 +30,7 @@ class ClientRequestController extends Controller
      */
     public function create(): Response
     {
+        
         return Inertia::render('ClientRequests/Create', [
             'statuses' => [
                 'draft',
@@ -60,21 +62,21 @@ class ClientRequestController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title'                      => ['required', 'string', 'max:255'],
-            'description'                => ['required', 'string'],
-            'budget_min'                 => ['nullable', 'numeric'],
-            'budget_max'                 => ['nullable', 'numeric'],
-            'currency'                   => ['nullable', 'string', 'max:3'],
-            'deadline'                   => ['nullable', 'date'],
-            'required_skills'            => ['nullable', 'array'],
-            'project_type'               => ['required', 'in:fixed,hourly,milestone'],
-            'experience_level'           => ['nullable', 'in:junior,mid,senior,expert'],
-            'estimated_duration_weeks'   => ['nullable', 'integer', 'min:1'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'budget_min' => ['nullable', 'numeric'],
+            'budget_max' => ['nullable', 'numeric'],
+            'currency' => ['nullable', 'string', 'max:3'],
+            'deadline' => ['nullable', 'date'],
+            'required_skills' => ['nullable', 'array'],
+            'project_type' => ['required', 'in:fixed,hourly,milestone'],
+            'experience_level' => ['nullable', 'in:junior,mid,senior,expert'],
+            'estimated_duration_weeks' => ['nullable', 'integer', 'min:1'],
         ]);
 
         ClientRequest::create([
             ...$validated,
-            'client_user_id' => auth()->id(),
+            'client_user_id' => Auth::user()->id,
             'status' => 'draft',
         ]);
 
@@ -142,17 +144,17 @@ class ClientRequestController extends Controller
         $this->authorizeAccess($clientRequest);
 
         $validated = $request->validate([
-            'title'                    => ['required', 'string', 'max:255'],
-            'description'              => ['required', 'string'],
-            'budget_min'               => ['nullable', 'numeric'],
-            'budget_max'               => ['nullable', 'numeric'],
-            'currency'                 => ['nullable', 'string', 'max:3'],
-            'deadline'                 => ['nullable', 'date'],
-            'required_skills'          => ['nullable', 'array'],
-            'project_type'             => ['required', 'in:fixed,hourly,milestone'],
-            'experience_level'         => ['nullable', 'in:junior,mid,senior,expert'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'budget_min' => ['nullable', 'numeric'],
+            'budget_max' => ['nullable', 'numeric'],
+            'currency' => ['nullable', 'string', 'max:3'],
+            'deadline' => ['nullable', 'date'],
+            'required_skills' => ['nullable', 'array'],
+            'project_type' => ['required', 'in:fixed,hourly,milestone'],
+            'experience_level' => ['nullable', 'in:junior,mid,senior,expert'],
             'estimated_duration_weeks' => ['nullable', 'integer', 'min:1'],
-            'status'                   => ['required'],
+            'status' => ['required'],
         ]);
 
         $clientRequest->update($validated);
@@ -169,20 +171,16 @@ class ClientRequestController extends Controller
     {
         $this->authorizeAccess($clientRequest);
 
-        $clientRequest->delete();
+        ClientRequest::destroy($clientRequest->id);
 
-        return redirect()
-            ->route('client-requests.index')
+        return redirect()->route('client-requests.index')
             ->with('success', 'Request deleted successfully.');
     }
 
-    /**
-     * Check ownership.
-     */
     private function authorizeAccess(ClientRequest $clientRequest): void
     {
         abort_if(
-            $clientRequest->client_user_id !== auth()->id(),
+            $clientRequest->client_user_id !== Auth::id(),
             403,
             'Unauthorized'
         );

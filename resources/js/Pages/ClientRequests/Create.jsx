@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
-import Dashboard from '../Dashboard';
+
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 export default function Create({ projectTypes, experienceLevels }) {
     const { data, setData, post, processing, errors } = useForm({
@@ -215,4 +216,8 @@ export default function Create({ projectTypes, experienceLevels }) {
     );
 }
 
-Create.layout = (page) => <Dashboard children={page} />;
+Create.layout = (page) => (
+    <AuthenticatedLayout>
+        {page}
+    </AuthenticatedLayout>
+);
