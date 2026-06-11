@@ -38,6 +38,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::post('/client-requests/{clientRequest}/accept', [ClientRequestController::class, 'accept'])
+        ->name('client-requests.accept');
     Route::resource('client-requests', ClientRequestController::class);
 
     // routes/web.php  — inside your auth middleware group

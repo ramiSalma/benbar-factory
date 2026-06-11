@@ -3,12 +3,22 @@ import { Head, Link, router } from '@inertiajs/react';
 import Dashboard from '../Dashboard';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
-export default function Show({ request }) {
+export default function Show({ request, isAdmin }) {
     const destroy = () => {
         if (confirm('Are you sure you want to delete this request?')) {
             router.delete(route('client-requests.destroy', request.id));
         }
     };
+
+    const accept = () => {
+        if (confirm('Accept this request and create the project, cahier de charge, and missions?')) {
+            router.post(route('client-requests.accept', request.id), {}, {
+                preserveScroll: true,
+            });
+        }
+    };
+
+    const project = request.projects?.[0];
 
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -21,6 +31,14 @@ export default function Show({ request }) {
                         &larr; Back to Listings
                     </Link>
                     <div className="flex gap-2">
+                        {isAdmin && request.status !== 'accepted' && (
+                            <button
+                                onClick={accept}
+                                className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-xl hover:bg-emerald-700 transition-colors"
+                            >
+                                Accept and Generate
+                            </button>
+                        )}
                         <Link
                             href={route('client-requests.edit', request.id)}
                             className="px-4 py-2 bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-xl hover:bg-slate-50 transition-colors"
@@ -35,6 +53,58 @@ export default function Show({ request }) {
                         </button>
                     </div>
                 </div>
+
+                {project && (
+                    <div className="mb-6 bg-emerald-50 border border-emerald-100 rounded-2xl p-5">
+                        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+                                    Generated project
+                                </p>
+                                <h2 className="text-lg font-bold text-emerald-950">
+                                    {project.name}
+                                </h2>
+                            </div>
+                            <span className="w-fit rounded-full bg-white px-3 py-1 text-xs font-semibold capitalize text-emerald-700 border border-emerald-200">
+                                {project.status}
+                            </span>
+                        </div>
+                        {project.cahier_de_charge && (
+                            <div className="mt-4 rounded-xl bg-white/80 border border-emerald-100 p-4">
+                                <h3 className="text-sm font-bold text-slate-900 mb-2">
+                                    Cahier de charge
+                                </h3>
+                                <p className="text-sm leading-6 text-slate-700 whitespace-pre-line max-h-72 overflow-y-auto">
+                                    {project.cahier_de_charge}
+                                </p>
+                            </div>
+                        )}
+                        {project.missions?.length > 0 && (
+                            <div className="mt-4 grid gap-3 md:grid-cols-2">
+                                {project.missions.map((mission) => (
+                                    <div
+                                        key={mission.id}
+                                        className="rounded-xl bg-white border border-emerald-100 p-4"
+                                    >
+                                        <div className="flex items-start justify-between gap-3">
+                                            <h4 className="text-sm font-bold text-slate-900">
+                                                {mission.title}
+                                            </h4>
+                                            <span className="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-semibold capitalize text-slate-600">
+                                                {mission.priority}
+                                            </span>
+                                        </div>
+                                        <div className="mt-3 flex flex-wrap gap-2 text-xs text-slate-600">
+                                            <span>{mission.status}</span>
+                                            <span>{mission.estimated_hours ?? 0}h</span>
+                                            <span>{mission.budget}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Main Dashboard Card */}
                 <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">

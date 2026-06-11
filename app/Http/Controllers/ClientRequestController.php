@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ClientRequest;
+use App\Services\ClientRequestProjectGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -16,12 +17,14 @@ class ClientRequestController extends Controller
     public function index(): Response
     {
         $requests = ClientRequest::query()
-            ->where('client_user_id', Auth::user()->id)
+            ->with(['client:id,name,email'])
+            ->when(! Auth::user()->hasRole('admin'), fn ($query) => $query->where('client_user_id', Auth::id()))
             ->latest()
             ->paginate(10);
 
         return Inertia::render('ClientRequests/Index', [
             'requests' => $requests,
+            'isAdmin' => Auth::user()->hasRole('admin'),
         ]);
     }
 
@@ -98,7 +101,10 @@ class ClientRequestController extends Controller
             'request' => $clientRequest->load([
                 'client:id,name,email',
                 'reviewer:id,name',
+                'projects:id,name,client_request_id,status,cahier_de_charge',
+                'projects.missions:id,project_id,title,status,budget,priority,estimated_hours',
             ]),
+            'isAdmin' => Auth::user()->hasRole('admin'),
         ]);
     }
 
@@ -139,7 +145,11 @@ class ClientRequestController extends Controller
     /**
      * Update request.
      */
-    public function update(Request $request, ClientRequest $clientRequest)
+    public function update(
+        Request $request,
+        ClientRequest $clientRequest,
+        ClientRequestProjectGenerator $generator,
+    )
     {
         $this->authorizeAccess($clientRequest);
 
@@ -154,14 +164,44 @@ class ClientRequestController extends Controller
             'project_type' => ['required', 'in:fixed,hourly,milestone'],
             'experience_level' => ['nullable', 'in:junior,mid,senior,expert'],
             'estimated_duration_weeks' => ['nullable', 'integer', 'min:1'],
-            'status' => ['required'],
+            'status' => ['required', 'in:draft,published,in_review,accepted,rejected,closed'],
         ]);
 
+        abort_if(
+            ! Auth::user()->hasRole('admin') && in_array($validated['status'], ['accepted', 'rejected', 'closed'], true),
+            403,
+            'Only admins can review client requests.'
+        );
+
+        $wasAccepted = $clientRequest->status === 'accepted';
+
+        if (Auth::user()->hasRole('admin') && in_array($validated['status'], ['accepted', 'rejected'], true)) {
+            $validated['reviewed_by'] = Auth::id();
+            $validated['reviewed_at'] = now();
+        }
+
         $clientRequest->update($validated);
+
+        if (Auth::user()->hasRole('admin') && ! $wasAccepted && $clientRequest->status === 'accepted') {
+            $generator->accept($clientRequest->fresh(), Auth::user());
+        }
 
         return redirect()
             ->route('client-requests.show', $clientRequest)
             ->with('success', 'Request updated successfully.');
+    }
+
+    public function accept(
+        ClientRequest $clientRequest,
+        ClientRequestProjectGenerator $generator,
+    ) {
+        abort_unless(Auth::user()->hasRole('admin'), 403);
+
+        $project = $generator->accept($clientRequest, Auth::user());
+
+        return redirect()
+            ->route('client-requests.show', $clientRequest)
+            ->with('success', 'Request accepted. Project '.$project->name.' was created with a cahier de charge and missions.');
     }
 
     /**
@@ -180,7 +220,7 @@ class ClientRequestController extends Controller
     private function authorizeAccess(ClientRequest $clientRequest): void
     {
         abort_if(
-            $clientRequest->client_user_id !== Auth::id(),
+            ! Auth::user()->hasRole('admin') && $clientRequest->client_user_id !== Auth::id(),
             403,
             'Unauthorized'
         );

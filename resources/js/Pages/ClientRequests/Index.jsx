@@ -3,13 +3,23 @@ import { Head, Link, router } from "@inertiajs/react";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-export default function Index({ requests }) {
+export default function Index({ requests, isAdmin }) {
     const destroy = (id) => {
         if (!confirm("Are you sure you want to delete this request?")) {
             return;
         }
 
         router.delete(route("client-requests.destroy", id), {
+            preserveScroll: true,
+        });
+    };
+
+    const accept = (id) => {
+        if (!confirm("Accept this request and generate its project plan?")) {
+            return;
+        }
+
+        router.post(route("client-requests.accept", id), {}, {
             preserveScroll: true,
         });
     };
@@ -61,6 +71,11 @@ export default function Index({ requests }) {
                                     <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Type
                                     </th>
+                                    {isAdmin && (
+                                        <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                            Client
+                                        </th>
+                                    )}
                                     <th className="p-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
                                         Budget
                                     </th>
@@ -76,7 +91,7 @@ export default function Index({ requests }) {
                                 {requests.data.length === 0 ? (
                                     <tr>
                                         <td
-                                            colSpan="5"
+                                            colSpan={isAdmin ? "6" : "5"}
                                             className="p-8 text-center text-slate-400 text-sm"
                                         >
                                             No requests found. Create your first
@@ -108,6 +123,11 @@ export default function Index({ requests }) {
                                             <td className="p-4 text-sm text-slate-600 capitalize">
                                                 {req.project_type}
                                             </td>
+                                            {isAdmin && (
+                                                <td className="p-4 text-sm text-slate-600">
+                                                    {req.client?.name || "Unknown"}
+                                                </td>
+                                            )}
                                             <td className="p-4 text-sm text-slate-700 font-medium">
                                                 {req.budget_min ||
                                                 req.budget_max ? (
@@ -155,6 +175,16 @@ export default function Index({ requests }) {
                                                 >
                                                     Edit
                                                 </Link>
+                                                {isAdmin && req.status !== "accepted" && (
+                                                    <button
+                                                        onClick={() =>
+                                                            accept(req.id)
+                                                        }
+                                                        className="text-emerald-600 hover:text-emerald-700"
+                                                    >
+                                                        Accept
+                                                    </button>
+                                                )}
                                                 <button
                                                     onClick={() =>
                                                         destroy(req.id)
