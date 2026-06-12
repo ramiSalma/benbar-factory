@@ -10,6 +10,9 @@ use App\Models\Mission;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ClientRequestProjectGenerator
 {
@@ -27,6 +30,8 @@ class ClientRequestProjectGenerator
         'recommendations',
         'full_cahier_des_charges',
     ];
+
+    private const MODEL = 'gpt-4o-mini';
 
     public function accept(ClientRequest $clientRequest, User $admin): Project
     {
@@ -64,8 +69,20 @@ class ClientRequestProjectGenerator
                 'tech_stack' => $clientRequest->required_skills ?? [],
                 'tags' => $clientRequest->required_skills ?? [],
                 'created_by_admin' => $admin->id,
-                'admin_notes' => 'Created automatically after admin accepted client request #'.$clientRequest->id.'.',
+                'admin_notes' => 'Created automatically after admin accepted client request #'.$clientRequest->id.'. AI source: '.$generation['source'].'.',
             ]);
+
+            $pdfPath = $this->storeCahierPdf($project, $clientRequest, $generation['cahier_de_charge']);
+            $cahier = [
+                ...$generation['cahier_de_charge'],
+                'pdf_path' => $pdfPath,
+                'pdf_url' => Storage::disk('public')->url($pdfPath),
+            ];
+
+            $project->forceFill([
+                'cahier_de_charge' => $this->encodeCahier($cahier),
+                'cahier_de_charge_pdf_path' => $pdfPath,
+            ])->save();
 
             $lot = Lot::create([
                 'project_id' => $project->id,
@@ -110,13 +127,14 @@ class ClientRequestProjectGenerator
                     'client_request_id' => $clientRequest->id,
                     'generated_missions' => count($generation['missions']),
                     'source' => $generation['source'],
+                    'pdf_path' => $pdfPath,
                 ],
             ]);
 
             AiMessage::create([
                 'ai_session_id' => $session->id,
                 'role' => 'assistant',
-                'content' => $this->encodeCahier($generation['cahier_de_charge']),
+                'content' => $this->encodeCahier($cahier),
                 'model' => $generation['model'],
             ]);
 
@@ -134,11 +152,11 @@ class ClientRequestProjectGenerator
 
         try {
             $response = \OpenAI\Laravel\Facades\OpenAI::chat()->create([
-                'model' => 'gpt-4o-mini',
+                'model' => self::MODEL,
                 'messages' => [
                     [
                         'role' => 'system',
-                        'content' => 'Tu es un chef de projet IT expert en redaction de cahiers des charges. Retourne uniquement un JSON valide, sans markdown.',
+                        'content' => 'Tu es un chef de projet IT senior. Tu rediges un cahier des charges professionnel en francais et tu decoupes le projet en missions de developpement exploitables. Retourne uniquement un JSON valide, sans markdown.',
                     ],
                     [
                         'role' => 'user',
@@ -152,6 +170,7 @@ class ClientRequestProjectGenerator
             $decoded = json_decode($content, true, flags: JSON_THROW_ON_ERROR);
 
             $cahier = $this->normalizeCahier($decoded, $clientRequest);
+            $missions = $this->normalizeMissions($decoded['missions'] ?? [], $clientRequest);
 
             if ($cahier === null) {
                 return $fallback;
@@ -159,11 +178,16 @@ class ClientRequestProjectGenerator
 
             return [
                 'cahier_de_charge' => $cahier,
-                'missions' => $this->missionsFromCahier($cahier, $clientRequest),
-                'model' => 'gpt-4o-mini',
+                'missions' => $missions !== [] ? $missions : $this->missionsFromCahier($cahier, $clientRequest),
+                'model' => self::MODEL,
                 'source' => 'openai',
             ];
-        } catch (\Throwable) {
+        } catch (\Throwable $exception) {
+            Log::warning('AI cahier de charge generation failed; using fallback.', [
+                'client_request_id' => $clientRequest->id,
+                'error' => $exception->getMessage(),
+            ]);
+
             return $fallback;
         }
     }
@@ -253,6 +277,21 @@ class ClientRequestProjectGenerator
                 ]],
                 'recommendations' => ['string'],
                 'full_cahier_des_charges' => 'string',
+            ],
+            'mission_output_schema' => [[
+                'title' => 'string, max 255 characters',
+                'description' => 'string, detailed mission scope and acceptance criteria',
+                'budget' => 'number',
+                'deadline' => 'YYYY-MM-DD|null',
+                'estimated_hours' => 'integer',
+                'required_skills' => ['string'],
+                'priority' => 'low|medium|high|critical',
+            ]],
+            'output_contract' => [
+                'Return a root JSON object containing all cahier keys plus a missions array.',
+                'The missions array must contain 3 to 10 concrete development missions.',
+                'Mission budgets should sum close to the client budget when a budget exists.',
+                'Mission priorities must use low, medium, high, or critical.',
             ],
             'request' => [
                 'project_name' => $clientRequest->title,
@@ -448,6 +487,104 @@ class ClientRequestProjectGenerator
             ->filter(fn (array $mission) => filled($mission['title']))
             ->values()
             ->all() ?: $fallback['missions'];
+    }
+
+    private function storeCahierPdf(Project $project, ClientRequest $clientRequest, array $cahier): string
+    {
+        $title = 'Cahier des charges - '.$project->name;
+        $text = $cahier['full_cahier_des_charges'] ?? $this->formatCahierText($clientRequest, $cahier);
+        $lines = $this->pdfLines($title."\n\n".$text);
+        $pdf = $this->buildSimplePdf($lines);
+        $path = sprintf(
+            'cahiers-de-charge/project-%d-%s.pdf',
+            $project->id,
+            Str::slug($project->name) ?: 'cahier'
+        );
+
+        Storage::disk('public')->put($path, $pdf);
+
+        return $path;
+    }
+
+    private function pdfLines(string $text): array
+    {
+        return collect(preg_split('/\R/u', $text) ?: [])
+            ->flatMap(function (string $line) {
+                $line = trim(Str::ascii($line));
+
+                if ($line === '') {
+                    return [''];
+                }
+
+                return explode("\n", wordwrap($line, 95, "\n", true));
+            })
+            ->values()
+            ->all();
+    }
+
+    private function buildSimplePdf(array $lines): string
+    {
+        $pages = array_chunk($lines, 48);
+        $objects = [
+            1 => '<< /Type /Catalog /Pages 2 0 R >>',
+            3 => '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+        ];
+        $pageIds = [];
+        $nextObjectId = 4;
+
+        foreach ($pages as $pageLines) {
+            $contentId = $nextObjectId++;
+            $pageId = $nextObjectId++;
+            $pageIds[] = $pageId;
+            $content = $this->pdfContentStream($pageLines);
+
+            $objects[$contentId] = "<< /Length ".strlen($content)." >>\nstream\n{$content}\nendstream";
+            $objects[$pageId] = "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents {$contentId} 0 R >>";
+        }
+
+        $objects[2] = '<< /Type /Pages /Kids ['.implode(' ', array_map(fn (int $id) => "{$id} 0 R", $pageIds)).'] /Count '.count($pageIds).' >>';
+        ksort($objects);
+
+        $pdf = "%PDF-1.4\n";
+        $offsets = [0 => 0];
+
+        foreach ($objects as $id => $object) {
+            $offsets[$id] = strlen($pdf);
+            $pdf .= "{$id} 0 obj\n{$object}\nendobj\n";
+        }
+
+        $xrefOffset = strlen($pdf);
+        $pdf .= "xref\n0 ".(count($objects) + 1)."\n";
+        $pdf .= "0000000000 65535 f \n";
+
+        for ($id = 1; $id <= count($objects); $id++) {
+            $pdf .= sprintf("%010d 00000 n \n", $offsets[$id]);
+        }
+
+        $pdf .= "trailer\n<< /Size ".(count($objects) + 1)." /Root 1 0 R >>\n";
+        $pdf .= "startxref\n{$xrefOffset}\n%%EOF";
+
+        return $pdf;
+    }
+
+    private function pdfContentStream(array $lines): string
+    {
+        $content = "BT\n/F1 10 Tf\n50 790 Td\n14 TL\n";
+
+        foreach ($lines as $line) {
+            $content .= '('.$this->escapePdfText($line).") Tj\nT*\n";
+        }
+
+        return $content."ET";
+    }
+
+    private function escapePdfText(string $text): string
+    {
+        return str_replace(
+            ['\\', '(', ')'],
+            ['\\\\', '\\(', '\\)'],
+            $text
+        );
     }
 
     private function formatCahierText(ClientRequest $clientRequest, array $cahier): string

@@ -18,6 +18,7 @@ class Project extends Model
         'name',
         'description',
         'cahier_de_charge',
+        'cahier_de_charge_pdf_path',
         'budget',
         'status',
         'start_date',

@@ -16,7 +16,7 @@ export default function Index({ projects, isAdmin }) {
         <>
             <Head title="Projects" />
 
-            <div className="mx-auto max-w-7xl space-y-6">
+            <div className=" max-w-7xl space-y-6">
                 <div>
                     <p className="text-sm font-bold uppercase tracking-wide text-indigo-600">
                         {isAdmin ? "Admin" : "Client"}

@@ -115,7 +115,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 )}
 
                 {/* Primary Content Viewport */}
-                <main className="flex-1 px-4 py-8 sm:px-8 lg:px-12 bg-gray-50/50">
+                <main className="flex-1 px-1 py-8 sm:px-8 lg:px-12 bg-gray-50/50">
                     {children}
                 </main>
             </div>

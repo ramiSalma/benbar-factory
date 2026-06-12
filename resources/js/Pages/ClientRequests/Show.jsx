@@ -3,6 +3,18 @@ import { Head, Link, router } from '@inertiajs/react';
 import Dashboard from '../Dashboard';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
+function parseCahier(value) {
+    if (!value) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(value);
+    } catch {
+        return { full_cahier_des_charges: value };
+    }
+}
+
 export default function Show({ request, isAdmin }) {
     const destroy = () => {
         if (confirm('Are you sure you want to delete this request?')) {
@@ -19,6 +31,7 @@ export default function Show({ request, isAdmin }) {
     };
 
     const project = request.projects?.[0];
+    const cahier = parseCahier(project?.cahier_de_charge);
 
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -69,13 +82,25 @@ export default function Show({ request, isAdmin }) {
                                 {project.status}
                             </span>
                         </div>
-                        {project.cahier_de_charge && (
+                        {cahier && (
                             <div className="mt-4 rounded-xl bg-white/80 border border-emerald-100 p-4">
-                                <h3 className="text-sm font-bold text-slate-900 mb-2">
-                                    Cahier de charge
-                                </h3>
+                                <div className="mb-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                                    <h3 className="text-sm font-bold text-slate-900">
+                                        Cahier de charge
+                                    </h3>
+                                    {(cahier.pdf_url || project.cahier_de_charge_pdf_path) && (
+                                        <a
+                                            href={cahier.pdf_url || `/storage/${project.cahier_de_charge_pdf_path}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex w-fit items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700"
+                                        >
+                                            Open PDF
+                                        </a>
+                                    )}
+                                </div>
                                 <p className="text-sm leading-6 text-slate-700 whitespace-pre-line max-h-72 overflow-y-auto">
-                                    {project.cahier_de_charge}
+                                    {cahier.full_cahier_des_charges || cahier.project_summary || project.cahier_de_charge}
                                 </p>
                             </div>
                         )}

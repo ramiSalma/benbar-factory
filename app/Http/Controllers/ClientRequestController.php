@@ -116,7 +116,7 @@ class ClientRequestController extends Controller
             'request' => $clientRequest->load([
                 'client:id,name,email',
                 'reviewer:id,name',
-                'projects:id,name,client_request_id,status,cahier_de_charge',
+                'projects:id,name,client_request_id,status,cahier_de_charge,cahier_de_charge_pdf_path',
                 'projects.missions:id,project_id,title,status,budget,priority,estimated_hours',
             ]),
             'isAdmin' => Auth::user()->hasRole('admin'),
@@ -132,7 +132,7 @@ class ClientRequestController extends Controller
                 'client:id,name,email',
                 'client.clientProfile:user_id,company_name,industry,client_type',
                 'reviewer:id,name',
-                'projects:id,name,client_request_id,status,cahier_de_charge,budget,currency,end_date',
+                'projects:id,name,client_request_id,status,cahier_de_charge,cahier_de_charge_pdf_path,budget,currency,end_date',
                 'projects.missions:id,project_id,title,status,budget,priority,estimated_hours',
             ]),
         ]);

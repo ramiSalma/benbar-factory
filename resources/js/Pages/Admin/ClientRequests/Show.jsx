@@ -117,7 +117,19 @@ export default function Show({ request }) {
 
                         {cahier && (
                             <div className="mt-5 rounded-lg border border-emerald-100 bg-white p-4">
-                                <h3 className="font-black text-slate-950">Cahier de charge</h3>
+                                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <h3 className="font-black text-slate-950">Cahier de charge</h3>
+                                    {(cahier.pdf_url || project.cahier_de_charge_pdf_path) && (
+                                        <a
+                                            href={cahier.pdf_url || `/storage/${project.cahier_de_charge_pdf_path}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex w-fit items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700"
+                                        >
+                                            Open PDF
+                                        </a>
+                                    )}
+                                </div>
                                 {cahier.project_summary && (
                                     <p className="mt-2 text-sm leading-6 text-slate-700">{cahier.project_summary}</p>
                                 )}
