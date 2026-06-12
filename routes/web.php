@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AIController;
+use App\Http\Controllers\Auth\PhoneOtpController;
 use App\Http\Controllers\ClientRequestController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SecuritySettingsController;
@@ -22,6 +23,16 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
+});
+
+Route::middleware('guest')->group(function () {
+    Route::post('otp/send', [PhoneOtpController::class, 'send'])
+        ->middleware('throttle:3,1')
+        ->name('otp.send');
+
+    Route::post('otp/verify', [PhoneOtpController::class, 'verify'])
+        ->middleware('throttle:10,1')
+        ->name('otp.verify');
 });
 
 

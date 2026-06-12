@@ -17,6 +17,13 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('status')->default('active')->index();
+            $table->string('avatar', 2048)->nullable();
+            $table->string('country')->nullable()->index();
+            $table->string('city')->nullable()->index();
+            $table->string('timezone')->default('UTC');
+            $table->string('preferred_language', 10)->default('en');
+            $table->boolean('is_super_admin')->default(false)->index();
             $table->rememberToken();
             $table->foreignId('current_team_id')->nullable();
             $table->string('profile_photo_path', 2048)->nullable();

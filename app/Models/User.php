@@ -2,27 +2,20 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-
-
-#[Fillable(['name', 'email', 'password'])]
-#[Hidden(['password', 'remember_token', 'two_factor_recovery_codes', 'two_factor_secret'])]
 class User extends Authenticatable implements MustVerifyEmail
 {
-    /** @use HasFactory<UserFactory> */
+    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasApiTokens, HasFactory, Notifiable, TwoFactorAuthenticatable;
     use HasRoles;
 
@@ -32,6 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'status',
         'avatar',
+        'profile_photo_path',
         'country',
         'city',
         'phone',
@@ -39,6 +33,19 @@ class User extends Authenticatable implements MustVerifyEmail
         'timezone',
         'preferred_language',
         'email_verified_at',
+        'is_super_admin',
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array<int, string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**
@@ -52,6 +59,8 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'phone_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_super_admin' => 'boolean',
+            'two_factor_confirmed_at' => 'datetime',
         ];
     }
 

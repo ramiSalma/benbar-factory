@@ -87,7 +87,6 @@ return array(
     'Laravel\\Pail\\' => array($vendorDir . '/laravel/pail/src'),
     'Laravel\\Jetstream\\' => array($vendorDir . '/laravel/jetstream/src'),
     'Laravel\\Fortify\\' => array($vendorDir . '/laravel/fortify/src'),
-    'Laravel\\Breeze\\' => array($vendorDir . '/laravel/breeze/src'),
     'Laravel\\AgentDetector\\' => array($vendorDir . '/laravel/agent-detector/src'),
     'Inertia\\' => array($vendorDir . '/inertiajs/inertia-laravel/src'),
     'Illuminate\\Support\\' => array($vendorDir . '/laravel/framework/src/Illuminate/Macroable', $vendorDir . '/laravel/framework/src/Illuminate/Collections', $vendorDir . '/laravel/framework/src/Illuminate/Conditionable', $vendorDir . '/laravel/framework/src/Illuminate/Reflection'),

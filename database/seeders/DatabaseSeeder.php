@@ -36,11 +36,14 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Benbar Admin',
                 'password' => Hash::make('password'),
                 'status' => 'active',
+                'is_super_admin' => true,
                 'country' => 'Morocco',
                 'city' => 'Casablanca',
                 'phone' => '+212600000001',
                 'phone_verified_at' => now(),
                 'email_verified_at' => now(),
+                'timezone' => 'Africa/Casablanca',
+                'preferred_language' => 'en',
             ],
         );
         $admin->syncRoles(['admin']);
@@ -51,11 +54,14 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Benbar Client',
                 'password' => Hash::make('password'),
                 'status' => 'active',
+                'is_super_admin' => false,
                 'country' => 'Morocco',
                 'city' => 'Rabat',
                 'phone' => '+212600000002',
                 'phone_verified_at' => now(),
                 'email_verified_at' => now(),
+                'timezone' => 'Africa/Casablanca',
+                'preferred_language' => 'en',
             ],
         );
         $client->syncRoles(['client']);
@@ -82,11 +88,14 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Benbar Freelancer',
                 'password' => Hash::make('password'),
                 'status' => 'active',
+                'is_super_admin' => false,
                 'country' => 'Morocco',
                 'city' => 'Marrakech',
                 'phone' => '+212600000003',
                 'phone_verified_at' => now(),
                 'email_verified_at' => now(),
+                'timezone' => 'Africa/Casablanca',
+                'preferred_language' => 'en',
             ],
         );
         $freelancer->syncRoles(['freelancer']);

@@ -25,23 +25,22 @@
     21 => 'Illuminate\\Validation\\ValidationServiceProvider',
     22 => 'Illuminate\\View\\ViewServiceProvider',
     23 => 'Inertia\\ServiceProvider',
-    24 => 'Laravel\\Breeze\\BreezeServiceProvider',
-    25 => 'Laravel\\Fortify\\FortifyServiceProvider',
-    26 => 'Laravel\\Jetstream\\JetstreamServiceProvider',
-    27 => 'Laravel\\Pail\\PailServiceProvider',
-    28 => 'Laravel\\Pao\\Laravel\\ServiceProvider',
-    29 => 'Laravel\\Passkeys\\PasskeysServiceProvider',
-    30 => 'Laravel\\Sanctum\\SanctumServiceProvider',
-    31 => 'Laravel\\Tinker\\TinkerServiceProvider',
-    32 => 'Carbon\\Laravel\\ServiceProvider',
-    33 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
-    34 => 'Termwind\\Laravel\\TermwindServiceProvider',
-    35 => 'OpenAI\\Laravel\\ServiceProvider',
-    36 => 'Spatie\\Permission\\PermissionServiceProvider',
-    37 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
-    38 => 'App\\Providers\\AppServiceProvider',
-    39 => 'App\\Providers\\FortifyServiceProvider',
-    40 => 'App\\Providers\\JetstreamServiceProvider',
+    24 => 'Laravel\\Fortify\\FortifyServiceProvider',
+    25 => 'Laravel\\Jetstream\\JetstreamServiceProvider',
+    26 => 'Laravel\\Pail\\PailServiceProvider',
+    27 => 'Laravel\\Pao\\Laravel\\ServiceProvider',
+    28 => 'Laravel\\Passkeys\\PasskeysServiceProvider',
+    29 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    30 => 'Laravel\\Tinker\\TinkerServiceProvider',
+    31 => 'Carbon\\Laravel\\ServiceProvider',
+    32 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
+    33 => 'Termwind\\Laravel\\TermwindServiceProvider',
+    34 => 'OpenAI\\Laravel\\ServiceProvider',
+    35 => 'Spatie\\Permission\\PermissionServiceProvider',
+    36 => 'Tighten\\Ziggy\\ZiggyServiceProvider',
+    37 => 'App\\Providers\\AppServiceProvider',
+    38 => 'App\\Providers\\FortifyServiceProvider',
+    39 => 'App\\Providers\\JetstreamServiceProvider',
   ),
   'eager' => 
   array (
@@ -230,7 +229,6 @@
     'validator' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'validation.presence' => 'Illuminate\\Validation\\ValidationServiceProvider',
     'Illuminate\\Contracts\\Validation\\UncompromisedVerifier' => 'Illuminate\\Validation\\ValidationServiceProvider',
-    'Laravel\\Breeze\\Console\\InstallCommand' => 'Laravel\\Breeze\\BreezeServiceProvider',
     'command.tinker' => 'Laravel\\Tinker\\TinkerServiceProvider',
     'OpenAI\\Client' => 'OpenAI\\Laravel\\ServiceProvider',
     'OpenAI\\Contracts\\ClientContract' => 'OpenAI\\Laravel\\ServiceProvider',
@@ -275,9 +273,6 @@
     array (
     ),
     'Illuminate\\Validation\\ValidationServiceProvider' => 
-    array (
-    ),
-    'Laravel\\Breeze\\BreezeServiceProvider' => 
     array (
     ),
     'Laravel\\Tinker\\TinkerServiceProvider' => 

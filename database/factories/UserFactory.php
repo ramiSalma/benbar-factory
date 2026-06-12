@@ -29,6 +29,15 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
+            'status' => 'active',
+            'avatar' => null,
+            'country' => 'Morocco',
+            'city' => 'Casablanca',
+            'phone' => fake()->unique()->numerify('+2126########'),
+            'phone_verified_at' => now(),
+            'timezone' => 'Africa/Casablanca',
+            'preferred_language' => 'en',
+            'is_super_admin' => false,
             'remember_token' => Str::random(10),
         ];
     }
