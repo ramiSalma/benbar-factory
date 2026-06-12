@@ -118,6 +118,12 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/client-requests/{clientRequest}/accept', [ClientRequestController::class, 'accept'])
         ->name('client-requests.accept');
+
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::post('/client-requests/{clientRequest}/accept', [ClientRequestController::class, 'accept'])
+            ->name('client-requests.accept');
+    });
+
     Route::resource('client-requests', ClientRequestController::class);
 
     // routes/web.php  — inside your auth middleware group
