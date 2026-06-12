@@ -25,4 +25,13 @@ php artisan vendor:publish --provider="OpenAI\Laravel\ServiceProvider"
 OPENAI_API_KEY=sk-...
 
 
+
+# 1. jetstream instalation
+composer require laravel/jetstream
+php artisan jetstream:install inertia
+npm install
+npm run build
+php artisan migrate
+
+
 brew install ca-certificates

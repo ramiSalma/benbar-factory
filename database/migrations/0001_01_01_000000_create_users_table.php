@@ -17,17 +17,9 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('status', ['active', 'inactive', 'banned', 'pending_verification'])->default('pending_verification');
-
-             // --- Common profile fields ---
-            $table->string('avatar')->nullable();
-            $table->string('country')->nullable();
-            $table->string('city')->nullable();
-            $table->string('timezone')->default('UTC');
-            $table->string('preferred_language')->default('en');
-
-            
             $table->rememberToken();
+            $table->foreignId('current_team_id')->nullable();
+            $table->string('profile_photo_path', 2048)->nullable();
             $table->timestamps();
         });
 

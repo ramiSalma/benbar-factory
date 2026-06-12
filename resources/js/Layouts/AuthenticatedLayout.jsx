@@ -45,14 +45,23 @@ export default function AuthenticatedLayout({ header, children }) {
                         >
                             Dashboard
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href="#" active={false}>
-                            Analytics
+                        <ResponsiveNavLink
+                            href={route("projects.index")}
+                            active={route().current("projects.*")}
+                        >
+                            Projects
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href="#" active={false}>
-                            Missions
+                        <ResponsiveNavLink
+                            href={route("client-requests.index")}
+                            active={route().current("client-requests.*")}
+                        >
+                            Requests
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href="#" active={false}>
-                            Settings
+                        <ResponsiveNavLink
+                            href={route("ai.index")}
+                            active={route().current("ai.*")}
+                        >
+                            AI
                         </ResponsiveNavLink>
                     </div>
                     <div className="border-t border-gray-100 pb-4 pt-4 px-6 bg-gray-50/50">
@@ -80,8 +89,11 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
                         </div>
                         <div className="mt-4 space-y-1">
-                            <ResponsiveNavLink href="#">
+                            <ResponsiveNavLink href={route("profile.show")}>
                                 Profile Settings
+                            </ResponsiveNavLink>
+                            <ResponsiveNavLink href={route("security.show")}>
+                                Security Settings
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"

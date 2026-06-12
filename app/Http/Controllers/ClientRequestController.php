@@ -28,6 +28,21 @@ class ClientRequestController extends Controller
         ]);
     }
 
+    public function adminIndex(): Response
+    {
+        abort_unless(Auth::user()->hasRole('admin'), 403);
+
+        $requests = ClientRequest::query()
+            ->with(['client:id,name,email', 'reviewer:id,name'])
+            ->withCount('projects')
+            ->latest()
+            ->paginate(12);
+
+        return Inertia::render('Admin/ClientRequests/Index', [
+            'requests' => $requests,
+        ]);
+    }
+
     /**
      * Show create form.
      */
@@ -105,6 +120,21 @@ class ClientRequestController extends Controller
                 'projects.missions:id,project_id,title,status,budget,priority,estimated_hours',
             ]),
             'isAdmin' => Auth::user()->hasRole('admin'),
+        ]);
+    }
+
+    public function adminShow(ClientRequest $clientRequest): Response
+    {
+        abort_unless(Auth::user()->hasRole('admin'), 403);
+
+        return Inertia::render('Admin/ClientRequests/Show', [
+            'request' => $clientRequest->load([
+                'client:id,name,email',
+                'client.clientProfile:user_id,company_name,industry,client_type',
+                'reviewer:id,name',
+                'projects:id,name,client_request_id,status,cahier_de_charge,budget,currency,end_date',
+                'projects.missions:id,project_id,title,status,budget,priority,estimated_hours',
+            ]),
         ]);
     }
 
@@ -198,6 +228,12 @@ class ClientRequestController extends Controller
         abort_unless(Auth::user()->hasRole('admin'), 403);
 
         $project = $generator->accept($clientRequest, Auth::user());
+
+        if (request()->routeIs('admin.*')) {
+            return redirect()
+                ->route('admin.client-requests.show', $clientRequest)
+                ->with('success', 'Request accepted. Project '.$project->name.' was created with a cahier de charge and missions.');
+        }
 
         return redirect()
             ->route('client-requests.show', $clientRequest)
