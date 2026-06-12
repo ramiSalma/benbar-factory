@@ -4796,3 +4796,4 @@ Stack trace:
 #65 D:/work/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('D://work//benbar-...')
 #66 {main}
 "} 
+[2026-06-12 12:02:37] local.WARNING: SMS provider is not configured; OTP was not delivered. {"provider":"custom"} 

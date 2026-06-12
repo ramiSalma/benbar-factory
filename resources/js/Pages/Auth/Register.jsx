@@ -7,8 +7,30 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import ClientRegisterForm from './Partials/ClientRegisterForm';
 import FreelancerRegisterForm from './Partials/FreelancerRegisterForm';
 
-const COUNTRIES_API_URL = 'https://restcountries.com/v3.1/all?fields=name,cca2,flag';
+const COUNTRIES_API_URL = 'https://restcountries.com/v3.1/all?fields=name,cca2,flag,flags';
+const COUNTRIES_FALLBACK_API_URL = 'https://countriesnow.space/api/v0.1/countries/iso';
 const CITIES_API_URL = 'https://countriesnow.space/api/v0.1/countries/cities';
+
+const DEBUG_LOCATION_API = true;
+
+function debugLocationApi(message, data = null) {
+    if (!DEBUG_LOCATION_API) return;
+
+    if (data !== null) {
+        console.debug(`[Register location API] ${message}`, data);
+        return;
+    }
+
+    console.debug(`[Register location API] ${message}`);
+}
+
+function countryFlagFromCode(code) {
+    if (!code || code.length !== 2) return '';
+
+    return code
+        .toUpperCase()
+        .replace(/./g, (char) => String.fromCodePoint(127397 + char.charCodeAt(0)));
+}
 
 const steps = ['Account', 'Profile', 'Verify', 'Submit'];
 const inputClass = 'mt-1 block w-full bg-white/50 border-white/60 text-slate-900 rounded-xl placeholder-slate-400 focus:bg-white/90 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200 shadow-inner';
@@ -16,32 +38,92 @@ const labelClass = 'text-slate-700 font-bold tracking-wide text-xs uppercase mb-
 const errorClass = 'mt-1.5 text-xs font-semibold text-red-600';
 
 async function fetchCountries(signal) {
-    const response = await fetch(COUNTRIES_API_URL, { signal });
+    debugLocationApi('Loading countries from primary API', COUNTRIES_API_URL);
 
-    if (!response.ok) {
-        throw new Error('Unable to load countries.');
+    try {
+        const response = await fetch(COUNTRIES_API_URL, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+            signal,
+        });
+
+        debugLocationApi('Primary countries API response', {
+            ok: response.ok,
+            status: response.status,
+            statusText: response.statusText,
+        });
+
+        if (!response.ok) {
+            throw new Error(`REST Countries failed with status ${response.status}`);
+        }
+
+        const countries = await response.json();
+
+        if (!Array.isArray(countries)) {
+            throw new Error('Invalid REST Countries response format.');
+        }
+
+        const normalizedCountries = countries
+            .map((country) => {
+                const code = country.cca2;
+
+                return {
+                    name: country.name?.common,
+                    code,
+                    flag: country.flag || countryFlagFromCode(code),
+                };
+            })
+            .filter((country) => country.name && country.code)
+            .sort((a, b) => a.name.localeCompare(b.name));
+
+        if (normalizedCountries.length === 0) {
+            throw new Error('REST Countries returned zero valid countries.');
+        }
+
+        return normalizedCountries;
+    } catch (primaryError) {
+        if (primaryError.name === 'AbortError') throw primaryError;
+
+        console.error('[Register location API] Primary countries API failed, trying fallback.', primaryError);
+
+        const response = await fetch(COUNTRIES_FALLBACK_API_URL, {
+            method: 'GET',
+            headers: { Accept: 'application/json' },
+            signal,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Fallback countries API failed with status ${response.status}`);
+        }
+
+        const payload = await response.json();
+
+        if (!Array.isArray(payload?.data)) {
+            throw new Error('Invalid fallback countries response format.');
+        }
+
+        return payload.data
+            .map((country) => {
+                const code = country.Iso2 || country.iso2 || country.cca2;
+
+                return {
+                    name: country.name || country.country,
+                    code,
+                    flag: countryFlagFromCode(code),
+                };
+            })
+            .filter((country) => country.name && country.code)
+            .sort((a, b) => a.name.localeCompare(b.name));
     }
-
-    const countries = await response.json();
-
-    if (!Array.isArray(countries)) {
-        throw new Error('Invalid countries response.');
-    }
-
-    return countries
-        .map((country) => ({
-            name: country.name?.common,
-            code: country.cca2,
-            flag: country.flag,
-        }))
-        .filter((country) => country.name && country.code)
-        .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 async function fetchCities(country, signal) {
+    debugLocationApi('Loading cities', { url: CITIES_API_URL, country });
+
     const response = await fetch(CITIES_API_URL, {
         method: 'POST',
         headers: {
+            Accept: 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ country }),
@@ -49,7 +131,7 @@ async function fetchCities(country, signal) {
     });
 
     if (!response.ok) {
-        throw new Error('Unable to load cities.');
+        throw new Error(`Cities API failed with status ${response.status}`);
     }
 
     const payload = await response.json();
@@ -72,10 +154,7 @@ function firstErrorMessage(payload, fallbackMessage) {
 
     if (errors && typeof errors === 'object') {
         const firstError = Object.values(errors).flat()[0];
-
-        if (firstError) {
-            return firstError;
-        }
+        if (firstError) return firstError;
     }
 
     return payload?.message ?? fallbackMessage;
