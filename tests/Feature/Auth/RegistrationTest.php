@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use App\Models\PhoneOtp;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,13 +20,27 @@ class RegistrationTest extends TestCase
 
     public function test_new_users_can_register(): void
     {
+        PhoneOtp::create([
+            'phone' => PhoneOtp::normalizePhone('+212600000004'),
+            'otp_code' => PhoneOtp::hashCode('123456'),
+            'expires_at' => now()->addMinutes(5),
+            'verified_at' => now(),
+            'attempts' => 1,
+        ]);
+
         $response = $this->post('/register', [
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'password',
             'password_confirmation' => 'password',
             'role' => 'client',
+            'phone' => '+212600000004',
+            'client_type' => 'association',
+            'contact_name' => 'Acme Contact',
             'company_name' => 'Acme Studio',
+            'industry' => 'Education',
+            'registration_number' => 'RNA-123',
+            'billing_address' => '12 Test Street',
         ]);
 
         $this->assertAuthenticated();
@@ -39,6 +54,8 @@ class RegistrationTest extends TestCase
         ]);
         $this->assertDatabaseHas('client_profiles', [
             'user_id' => $user->id,
+            'client_type' => 'association',
+            'contact_name' => 'Acme Contact',
             'company_name' => 'Acme Studio',
         ]);
     }

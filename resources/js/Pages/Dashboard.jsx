@@ -1,6 +1,5 @@
-import React from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage, Link, router } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 
 const roleLabels = {
     admin: 'Admin',
@@ -22,35 +21,18 @@ function initials(name) {
         .join('');
 }
 
-export default function Dashboard({ profile, primaryRole, roles = [], requests }) {
+const statLabels = {
+    users: 'Users',
+    clients: 'Clients',
+    freelancers: 'Freelancers',
+    projects: 'Projects',
+    clientRequests: 'Client requests',
+};
+
+export default function Dashboard({ profile, primaryRole, roles = [], adminStats }) {
     const user = usePage().props.auth.user;
     const displayRole = formatRole(primaryRole ?? roles[0]);
     const location = [user.city, user.country].filter(Boolean).join(', ');
-
-    // Normalize requests prop safely to prevent reading properties of undefined
-    const safeRequestsData = requests?.data ?? [];
-    const safeRequestsLinks = requests?.links ?? [];
-
-    // For deleting items directly from the list inside the dashboard
-    const destroyRequest = (id) => {
-        if (confirm('Are you sure you want to delete this request?')) {
-            router.delete(route('client-requests.destroy', id), {
-                preserveScroll: true
-            });
-        }
-    };
-
-    const getStatusColor = (status) => {
-        const colors = {
-            draft: 'bg-slate-100 text-slate-700 border-slate-200',
-            published: 'bg-sky-50 text-sky-700 border-sky-200',
-            in_review: 'bg-cyan-50 text-cyan-700 border-cyan-200',
-            accepted: 'bg-blue-50 text-blue-700 border-blue-200',
-            rejected: 'bg-rose-50 text-rose-700 border-rose-200',
-            closed: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-        };
-        return colors[status] || 'bg-gray-100 text-gray-700';
-    };
 
     const profileFields =
         primaryRole === 'freelancer'
@@ -73,6 +55,7 @@ export default function Dashboard({ profile, primaryRole, roles = [], requests }
                   ['Portfolio', profile?.portfolio_url],
               ]
             : [
+                  ['Client type', profile?.client_type?.replace('_', ' ')],
                   ['Company', profile?.company_name],
                   ['Industry', profile?.industry],
                   ['Phone', profile?.phone],
@@ -91,7 +74,72 @@ export default function Dashboard({ profile, primaryRole, roles = [], requests }
         >
             <Head title="Dashboard" />
 
-           
+            <div className="space-y-8">
+                <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm font-semibold uppercase tracking-wide text-indigo-600">
+                                {displayRole}
+                            </p>
+                            <h1 className="mt-1 text-2xl font-black text-slate-900">
+                                Welcome back, {user.name}
+                            </h1>
+                            <p className="mt-2 text-sm text-slate-500">
+                                {location || user.email}
+                            </p>
+                        </div>
+                        <div className="flex h-14 w-14 items-center justify-center rounded-lg bg-indigo-600 text-lg font-black text-white">
+                            {initials(user.name)}
+                        </div>
+                    </div>
+                </section>
+
+                {primaryRole === 'admin' && adminStats && (
+                    <section>
+                        <div className="mb-3">
+                            <h2 className="text-lg font-bold text-slate-900">Admin dashboard</h2>
+                            <p className="text-sm text-slate-500">
+                                Platform activity overview.
+                            </p>
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
+                            {Object.entries(adminStats).map(([key, value]) => (
+                                <div key={key} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                                        {statLabels[key] ?? key}
+                                    </p>
+                                    <p className="mt-3 text-3xl font-black text-slate-900">
+                                        {value}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {primaryRole !== 'admin' && (
+                    <section>
+                        <div className="mb-3">
+                            <h2 className="text-lg font-bold text-slate-900">Profile summary</h2>
+                            <p className="text-sm text-slate-500">
+                                Your registration details.
+                            </p>
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                            {profileFields.map(([label, value]) => (
+                                <div key={label} className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+                                    <p className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                                        {label}
+                                    </p>
+                                    <p className="mt-2 text-sm font-semibold capitalize text-slate-900">
+                                        {value || 'Not provided'}
+                                    </p>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+                )}
+            </div>
         </AuthenticatedLayout>
     );
 }

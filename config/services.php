@@ -35,4 +35,25 @@ return [
         ],
     ],
 
+    'sms' => [
+        'provider' => env('SMS_PROVIDER', 'custom'),
+
+        'twilio' => [
+            'sid' => env('TWILIO_ACCOUNT_SID'),
+            'token' => env('TWILIO_AUTH_TOKEN'),
+            'from' => env('TWILIO_FROM'),
+        ],
+
+        'vonage' => [
+            'key' => env('VONAGE_KEY'),
+            'secret' => env('VONAGE_SECRET'),
+            'from' => env('VONAGE_FROM', env('APP_NAME', 'Benbar')),
+        ],
+
+        'custom' => [
+            'endpoint' => env('SMS_CUSTOM_ENDPOINT'),
+            'token' => env('SMS_CUSTOM_TOKEN'),
+        ],
+    ],
+
 ];

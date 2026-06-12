@@ -13,6 +13,8 @@ class ClientProfile extends Model
 
     protected $fillable = [
         'user_id',
+        'client_type',
+        'contact_name',
         'company_name',
         'industry',
         'phone',
@@ -21,6 +23,9 @@ class ClientProfile extends Model
         'company_logo',
         'bio',
         'vat_number',
+        'registration_number',
+        'department',
+        'study_office_speciality',
         'billing_address',
         'billing_city',
         'billing_country',

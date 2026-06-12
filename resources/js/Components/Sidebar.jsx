@@ -10,7 +10,7 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
     const menu = [
         {
             label: "Dashboard",
-            href: "#",
+            href: route("dashboard"),
             icon: "M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V9h-8v12zm0-18v6h8V3h-8z",
             show: true,
         },
@@ -75,7 +75,7 @@ export default function BenbarSidebar({ isOpen, setIsOpen }) {
         // COMMON
         {
             label: "Profile",
-            href: "#",
+            href: route("profile.edit"),
             icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
             show: true,
         },

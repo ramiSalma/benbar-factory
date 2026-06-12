@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\ClientProfile;
 use App\Models\FreelancerProfile;
+use App\Models\PhoneOtp;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -12,7 +13,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\Rules;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -42,12 +45,61 @@ class RegisteredUserController extends Controller
             'role' => ['required', 'in:client,freelancer'],
             'country' => ['nullable', 'string', 'max:255'],
             'city' => ['nullable', 'string', 'max:255'],
-            'preferred_language' => ['nullable', 'string', 'max:10'],
-            'company_name' => ['nullable', 'string', 'max:255'],
-            'industry' => ['nullable', 'string', 'max:255'],
-            'phone' => ['nullable', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:30', 'regex:/^\+?[0-9\s().-]{8,30}$/'],
+            'client_type' => [
+                Rule::requiredIf($request->role === 'client'),
+                Rule::in(['particulier', 'entreprise', 'association', 'administration', 'bureau_etudes']),
+            ],
+            'contact_name' => [Rule::requiredIf($request->role === 'client'), 'nullable', 'string', 'max:255'],
+            'company_name' => [
+                Rule::requiredIf($request->role === 'client' && $request->client_type !== 'particulier'),
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'industry' => [
+                Rule::requiredIf($request->role === 'client' && in_array($request->client_type, ['entreprise', 'association'], true)),
+                'nullable',
+                'string',
+                'max:255',
+            ],
             'website' => ['nullable', 'url', 'max:255'],
-            'company_size' => ['nullable', 'string', 'max:255'],
+            'company_size' => [
+                Rule::requiredIf($request->role === 'client' && in_array($request->client_type, ['entreprise', 'bureau_etudes'], true)),
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'vat_number' => [
+                Rule::requiredIf($request->role === 'client' && $request->client_type === 'entreprise'),
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'registration_number' => [
+                Rule::requiredIf($request->role === 'client' && in_array($request->client_type, ['association', 'bureau_etudes'], true)),
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'department' => [
+                Rule::requiredIf($request->role === 'client' && $request->client_type === 'administration'),
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'study_office_speciality' => [
+                Rule::requiredIf($request->role === 'client' && $request->client_type === 'bureau_etudes'),
+                'nullable',
+                'string',
+                'max:255',
+            ],
+            'billing_address' => [
+                Rule::requiredIf($request->role === 'client'),
+                'nullable',
+                'string',
+                'max:255',
+            ],
             'bio' => ['nullable', 'string', 'max:2000'],
             'title' => ['nullable', 'string', 'max:255'],
             'speciality' => ['nullable', 'string', 'max:255'],
@@ -57,7 +109,22 @@ class RegisteredUserController extends Controller
             'headline' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user = DB::transaction(function () use ($request): User {
+        $phone = PhoneOtp::normalizePhone($request->phone);
+        $verifiedOtp = PhoneOtp::query()
+            ->where('phone', $phone)
+            ->whereNotNull('verified_at')
+            ->whereNull('user_id')
+            ->where('verified_at', '>=', now()->subMinutes(PhoneOtp::EXPIRES_IN_MINUTES))
+            ->latest('verified_at')
+            ->first();
+
+        if (! $verifiedOtp) {
+            throw ValidationException::withMessages([
+                'phone' => 'Verify your phone number before creating your account.',
+            ]);
+        }
+
+        $user = DB::transaction(function () use ($request, $phone, $verifiedOtp): User {
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -66,7 +133,13 @@ class RegisteredUserController extends Controller
                 'city' => $request->city,
                 'preferred_language' => $request->preferred_language ?? 'en',
                 'status' => 'active',
+                'phone' => $phone,
+                'phone_verified_at' => Carbon::parse($verifiedOtp->verified_at),
             ]);
+
+            $verifiedOtp->forceFill([
+                'user_id' => $user->id,
+            ])->save();
 
             Role::firstOrCreate([
                 'name' => $request->role,
@@ -79,14 +152,21 @@ class RegisteredUserController extends Controller
             if ($request->role === 'client') {
                 ClientProfile::create([
                     'user_id' => $user->id,
+                    'client_type' => $request->client_type,
+                    'contact_name' => $request->contact_name,
                     'company_name' => $request->company_name,
                     'industry' => $request->industry,
-                    'phone' => $request->phone,
+                    'phone' => $phone,
                     'website' => $request->website,
                     'company_size' => $request->company_size,
                     'bio' => $request->bio,
                     'vat_number' => $request->vat_number,
-                    'billing_country' => $request->billing_country,
+                    'registration_number' => $request->registration_number,
+                    'department' => $request->department,
+                    'study_office_speciality' => $request->study_office_speciality,
+                    'billing_address' => $request->billing_address,
+                    'billing_city' => $request->city,
+                    'billing_country' => $request->country,
                 ]);
             }
 
