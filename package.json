@@ -22,6 +22,7 @@
         "vite": "^7.3.5"
     },
     "dependencies": {
+        "@heroicons/react": "^2.2.0",
         "ogl": "^1.0.11"
     }
 }

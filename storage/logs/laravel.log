@@ -6021,3 +6021,4 @@ Stack trace:
 #59 D:/work/benbar-factory/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('D://work//benbar-...')
 #60 {main}
 "} 
+[2026-06-12 19:06:15] local.WARNING: AI cahier de charge generation failed; using fallback. {"client_request_id":2,"error":"Request rate limit has been exceeded."} 
